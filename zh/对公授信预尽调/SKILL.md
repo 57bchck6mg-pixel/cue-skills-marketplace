@@ -125,7 +125,7 @@ fi
 
 跑之前 agent 必须告知用户：
 
-> 本次预尽调约消耗 50–150 credits。新账号注册送 50 + 每天 10 免费积分，跑前可在 [cuecue.cn/workbench](https://cuecue.cn/workbench) 核对余额。
+> 本次预尽调约消耗 50–150 credits。新账号注册送 50 + 每天 10 免费积分，跑前可在 [cuecue.cn](https://cuecue.cn) 工作台核对余额。
 >
 > 确认继续？
 
