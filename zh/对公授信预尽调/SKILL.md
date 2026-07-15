@@ -183,4 +183,5 @@ python3 ~/.cue/cue-skills/cue-research/scripts/research_run.py \
 | 平台 | 状态 |
 |---|---|
 | Claude Code | SKILL.md 自动加载 |
+| WorkBuddy | SKILL.md 自动加载 |
 | Codex CLI / Gemini CLI / Cursor | 同 SKILL.md 标准，未独立验证 |
