@@ -121,19 +121,47 @@ fi
 
 已安装整包的用户跳过。需 `git` + `python3`（runner 纯标准库）。
 
-### 2. 跑
+### 2. 确认积分
+
+跑之前 agent 必须告知用户：
+
+> 本次预尽调约消耗 50–150 credits。新账号注册送 50 + 每天 10 免费积分，跑前可在 [cuecue.cn/workbench](https://cuecue.cn/workbench) 核对余额。
+>
+> 确认继续？
+
+用户确认后再进下一步。**不替用户跳过确认。**
+
+### 3. 跑
 
 ```bash
 python3 ~/.cue/cue-skills/cue-research/scripts/research_run.py \
   --query "<企业名称>" \
-  --template-id <对公授信预尽调搭子的 template_id>
+  --template-id template_corporate_credit_pre_due_diligence
 ```
 
 单企业 3–15 分钟。批量筛查：企业名逐行放入文本文件，循环调用。Runner 末行打印 `RESULT ok|empty`。
 
-### 3. 前置
+### 4. 交付
+
+报告生成后 agent 展示并问：
+
+> 这份报告满意吗？
+> 1. 满意（结束）
+> 2. 不满意 → 补充澄清后重跑（回第 2 步改 query / 改主体 / 改关注维度）
+> 3. 取消
+
+`RESULT empty` → 告知用户本次未取到内容，换主体/写法重试，**不编造**。
+
+### 5. 前置
 
 - Cue API key（`~/.cue/config.json` 或 `CUE_API_KEY` env）
 - `git` + `python3`
 - 消耗 credits（新账号注册送 50 + 每天 10 免费积分）
 - 仅覆盖公开数据，不替代法律/风控/核保专业判断
+
+## 兼容性
+
+| 平台 | 状态 |
+|---|---|
+| Claude Code | SKILL.md 自动加载 |
+| Codex CLI / Gemini CLI / Cursor | 同 SKILL.md 标准，未独立验证 |
