@@ -33,6 +33,21 @@ metadata:
 
 对目标企业做授信审批视角的公开数据交叉尽调，覆盖主体真实性、股权穿透、关联方网络、司法合规、经营持续性、偿债能力 6 个维度。自动补全公开披露盲区，每项结论附可点击来源链接，产出可上初审会的预尽调底稿。数据面：工商登记、股权变更备案、司法裁判与执行、行政处罚（环保/税务/工商/海关/外管）、经营异常与破产重整案件、公开财务披露。以上均通过 Cue 后端统一访问，agent 无需引导用户自行注册或登录各数据源网站。
 
+## 语言 / Language
+
+**Agent 必须根据用户消息的主语言决定所有用户可见输出的语言：**
+
+- 用户用中文提问 → 所有提示、确认、交付问题用**中文**
+- 用户用英文提问 → 所有提示、确认、交付问题用**英文**
+- 中英混杂 → 以用户第一条消息的主语言为准
+- 本文件中 `EN: ` 前缀的段落为英文模板，`ZH: ` 为中文模板，agent 按语言选用
+
+**The agent MUST match the user's language for all user-visible output:**
+- User writes in Chinese → prompts, confirmations, delivery in **Chinese**
+- User writes in English → prompts, confirmations, delivery in **English**
+- Mixed → use the dominant language of the user's first message
+- `EN:` prefixed lines are English templates; `ZH:` prefixed lines are Chinese templates
+
 ## 触发路由
 
 以下均为本搭子的触发范围——agent 识别语义而非死匹配字符串。不属于本搭子的（投资研究、融资历程、估值判断）不要触发，路由到对应搭子。
@@ -52,8 +67,10 @@ metadata:
   发债:         "发债主体尽调" / "bond issuer DD" / "债券发行人核查"
 
 试探性:
-  "我想先看看 XX 什么情况"    → 告知本搭子覆盖的 6 个维度，确认后跑
-  "这个搭子能查什么"          → 展示报告骨架概要
+  "I just want to get a sense of XX" → describe the 6 dimensions this buddy covers, ask to confirm before running
+  "What can this buddy check?"        → show the report structure summary
+  EN: Running pre-lending due diligence on [ENTITY]. This covers 6 dimensions: entity verification, UBO trace, affiliate network, litigation & compliance, operational continuity, debt service capacity. ~5–10 credits. Proceed?
+  ZH: 将用搭子「对公授信预尽调」跑【企业名称】，覆盖 6 个维度：主体核验、股权穿透、关联方、司法合规、经营持续性、偿债能力。约消耗 5–10 credits，是否继续？
 ```
 
 ## 报告结构
@@ -101,9 +118,9 @@ metadata:
 ## 重要约束
 
 - 交付前自检：每项结论可追溯到原始出处；缺失维度已标注"暂无数据"
-- Runner 打印 `RESULT empty` → 告知用户本次未取到内容，换主体/写法重试，**不编造**
-- 报告中不出现"建议放款/不建议放款/建议准入/不建议准入/建议通过/建议否决"等授信决策语——底稿是证据收集结果，授信决策是人做的
-- API key 不出现在输出/日志/提交；用户粘贴了 `sk...` → 提醒去 cuecue.cn/api-key 立即轮换
+- Runner 打印 `RESULT empty` → 告知用户本次未取到内容，换主体/写法重试，**不编造 / do not fabricate**
+- 报告中不出现"建议放款/不建议放款/建议准入/不建议准入/建议通过/建议否决 / approve / reject / recommend lending"等授信决策语——底稿是证据收集结果，授信决策是人做的。The report is evidence, not a credit decision
+- API key 不出现在输出/日志/提交；用户粘贴了 `sk...` → 提醒去 cuecue.cn/api-key 立即轮换 / remind user to rotate at cuecue.cn/api-key immediately
 
 ## 执行
 
@@ -124,7 +141,8 @@ fi
 
 跑之前 agent 必须告知用户：
 
-> 将用搭子「对公授信预尽调」跑【企业名称】，消耗 credits，是否继续？
+> ZH: 将用搭子「对公授信预尽调」跑【企业名称】，约消耗 5–10 credits，是否继续？
+> EN: Running pre-lending due diligence on [ENTITY] (~5–10 credits). Proceed?
 
 用户确认后再进下一步。**不替用户跳过确认。**
 
@@ -142,19 +160,23 @@ python3 ~/.cue/cue-skills/cue-research/scripts/research_run.py \
 
 报告生成后 agent 展示并问：
 
-> 这份报告满意吗？
-> 1. 满意（结束）
-> 2. 不满意 → 补充澄清后重跑（回第 2 步改 query / 改主体 / 改关注维度）
-> 3. 取消
+> ZH: 这份报告满意吗？
+>    1. 满意（结束）
+>    2. 不满意 → 补充澄清后重跑（回第 2 步改 query / 改主体 / 改关注维度）
+>    3. 取消
+> EN: Satisfied with this report?
+>    1. Yes (done)
+>    2. No → refine query and re-run (back to step 2: change entity / angle / focus area)
+>    3. Cancel
 
-`RESULT empty` → 告知用户本次未取到内容，换主体/写法重试，**不编造**。
+`RESULT empty` → ZH: "本次未取到内容，换主体/写法重试" / EN: "No results this run — try a different entity or phrasing"，**不编造 / do not fabricate**。
 
 ### 5. 前置
 
-- Cue API key（`~/.cue/config.json` 或 `CUE_API_KEY` env）
+- Cue API key（`~/.cue/config.json` or `CUE_API_KEY` env）
 - `git` + `python3`
-- 消耗 credits（新账号注册送 50 + 每天 10 免费积分）
-- 仅覆盖公开数据，不替代法律/风控/核保专业判断
+- 消耗 credits / Consumes credits（新账号注册送 50 + 每天 10 免费积分 / 50 on sign-up + 10 free daily）
+- 仅覆盖公开数据，不替代法律/风控/核保专业判断 / Public data only; does not replace legal / risk / underwriting judgment
 
 ## 兼容性
 
