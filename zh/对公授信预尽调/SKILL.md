@@ -19,8 +19,7 @@ description: >
   尽调 / pre-lending DD / credit due diligence / corporate credit check /
   supplier due diligence / vendor screening / UBO check / KYB / business
   verification / guarantor check / bond issuer DD. NOT for: investment
-  research or stock valuation → use cue-equity-research; funding history or
-  valuation trajectory → use cue-enterprise-portrait; personal credit scores;
+  research or stock valuation → use cue-equity-research; personal credit scores;
   AML requiring private bank transaction records.
 license: MIT
 metadata:
@@ -125,9 +124,7 @@ fi
 
 跑之前 agent 必须告知用户：
 
-> 本次预尽调约消耗 50–150 credits。新账号注册送 50 + 每天 10 免费积分，跑前可在 [cuecue.cn](https://cuecue.cn) 工作台核对余额。
->
-> 确认继续？
+> 将用搭子「对公授信预尽调」跑【企业名称】，消耗 credits，是否继续？
 
 用户确认后再进下一步。**不替用户跳过确认。**
 
